@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/scripts")
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="twelve columns">
+                <nav class="u-pull-right">
+                    <ul>
+                        <li class="menuopts">@Html.ActionLink("Cargar árbol", "LoadTree", "Pharmacy")</li>
+                        <li>@Html.ActionLink("Pedidos", "Orders", "Pharmacy")</li>
+                        <li>@Html.ActionLink("Reabastecimiento", "Refill", "Pharmacy")</li>
+                        <li>@Html.ActionLink("Búsqueda de fármacos", "Search", "Pharmacy")</li>
+                        <li>@Html.ActionLink("Recorrer árbol", "TraverseTree", "Pharmacy")</li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</body>
+</html>
