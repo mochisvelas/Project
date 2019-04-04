@@ -8,6 +8,10 @@ namespace ProjectSQL.Controllers
 {
     public class TechDBController : Controller
     {
-        
+        [HttpGet]
+        public ActionResult SQLCode() {
+
+            return View();
+        }
     }
 }
