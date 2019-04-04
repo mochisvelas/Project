@@ -120,6 +120,7 @@
     <Content Include="Views\Partial\Layout.cshtml" />
     <Content Include="Views\TechDB\SQLCode.cshtml" />
     <Content Include="Views\TechDB\SQLDisplay.cshtml" />
+    <Content Include="Views\TechDB\TableInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
