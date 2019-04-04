@@ -10,9 +10,8 @@ namespace ProjectSQL {
                 "~/Scripts/site.js"));
 
             //CSS
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                 "~/Content/menu.css",
-                 "~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Style/css").Include(
+                 "~/Style/menu.css"));
         }
 
     }
