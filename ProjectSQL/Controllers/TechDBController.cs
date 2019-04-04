@@ -13,5 +13,11 @@ namespace ProjectSQL.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public ActionResult SQLDisplay() {
+
+            return View();
+        }
     }
 }
