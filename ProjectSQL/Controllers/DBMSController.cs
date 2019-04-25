@@ -4,6 +4,11 @@ namespace ProjectSQL.Controllers {
 
     public class DBMSController : Controller {
         
+        public ActionResult SQLCode() {
+            return View();
+        }
+
+
     }
 
 }
