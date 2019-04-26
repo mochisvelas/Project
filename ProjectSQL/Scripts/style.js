@@ -12,3 +12,18 @@ $(document).ready(function () {
         $("#fileName").text($(this)[0].files[0].name)
     })
 })
+
+// Display the form to submit reserved words
+$(".newWord").click(function () {
+    $("#reservedWordForm").show()
+})
+
+// Hide the parent element
+$(".delete").click(function () {
+    $(this).parent().hide()
+})
+
+// Hide the form to submit reserved words
+$("#cancel").click(function () {
+    $("#reservedWordForm").hide()
+})
