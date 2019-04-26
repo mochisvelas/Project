@@ -5,3 +5,10 @@ $(document).ready(function () {
         $(".navbar-menu").toggleClass("is-active")
     })
 })
+
+// Change the name of the file
+$(document).ready(function () {
+    $(".file-input").on("change", function () {
+        $("#fileName").text($(this)[0].files[0].name)
+    })
+})
