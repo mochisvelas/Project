@@ -118,8 +118,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Views\Layout.cshtml" />
-    <Content Include="Views\DBMS\SQLCode.cshtml" />
     <Content Include="Views\web.config" />
+    <Content Include="Views\DBMS\LoadReservedWords.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

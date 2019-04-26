@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.BodyClass = "ReservedWords";
+    ViewBag.Title = "Cargar Palabras Reservadas";
+    Layout = "~/Views/Layout.cshtml";
+}
+<section class="section" style="padding: 25px">
+    <div class="content has-text-centered">
+        <h1 class="title is-3">Palabras Reservadas</h1>
+    </div>
+    <div class="container is-fluid">
+        <form method="post" action="/DBMS/LoadFile" enctype="multipart/form-data">
+            <div class="field is-grouped is-grouped-centered">
+                <div class="control">
+                    <div class="file is-info is-boxed has-name is-centered is-small">
+                        <label class="file-label">
+                            <input id="reservedWords" class="file-input" type="file" name="reservedWords" accept=".csv" />
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </span>
+                                <span class="file-label">Palabras Reservadas</span>
+                            </span>
+                            <span id="fileName" class="file-name">Seleccione un archivo</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="control">
+                    <button class="button is-info is-outlined is-rounded" type="submit" name="uploadFile">Subir Archivo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
