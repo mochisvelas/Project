@@ -57,6 +57,17 @@ namespace ProjectSQL.Controllers {
             return View("LoadReservedWords");
         }
 
+        // Add a new word to the dictionarie
+        [HttpPost]
+        public ActionResult AddNewWord(string option, string newWord) {
+            if(AddWord(option, newWord)) {
+                ViewBag.Message = "success";
+            } else {
+                ViewBag.Message = "Ocurrio un error. La palabra ya esta guardada en el diccionario.";
+            }
+            return View("LoadReservedWords");
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
@@ -125,12 +136,12 @@ namespace ProjectSQL.Controllers {
         /// <param name="dictionary">The dictionary to save the words</param>
         private bool SaveData(string[] items, ref Dictionary<string, List<string>> dictionary) {
             try {
-                if (dictionary.ContainsKey(items[0])) {
-                    List<string> words = dictionary[items[0]];
-                    words.Add(items[1]);
-                    dictionary[items[0]] = words;
+                if (dictionary.ContainsKey(items[0].ToUpper())) {
+                    List<string> words = dictionary[items[0].ToUpper()];
+                    words.Add(items[1].ToUpper());
+                    dictionary[items[0].ToUpper()] = words;
                 } else {
-                    dictionary.Add(items[0], new List<string>() { items[1] });
+                    dictionary.Add(items[0].ToUpper(), new List<string>() { items[1].ToUpper() });
                 }
                 return true;
             } catch (Exception) {
@@ -168,6 +179,32 @@ namespace ProjectSQL.Controllers {
                 { "VALUES", new List<string>(){ "VALUES" } },
                 { "GO", new List<string>(){ "GO" } }
             };
+        }
+
+        /// <summary>Add the new word in the dictionary if dosn't exist.</summary>
+        /// <param name="option">The command to check.</param>
+        /// <param name="word">The reserved word to add.</param>
+        /// <returns>True if the word has been added.</returns>
+        private bool AddWord(string option, string word) {
+            if (reservedWords.ContainsKey(option)) {
+                if (!InDictionary(word)) {
+                    reservedWords[option].Add(word.ToUpper());
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>Check if the word is in the dictionary.</summary>
+        /// <param name="word">The word to check.</param>
+        /// <returns>True if the word is in the dictionary.</returns>
+        private bool InDictionary(string word) {
+            foreach(KeyValuePair<string, List<string>> words in reservedWords) {
+                if (words.Value.Contains(word.ToUpper())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
