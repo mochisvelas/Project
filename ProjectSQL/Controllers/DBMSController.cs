@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
@@ -8,7 +9,7 @@ namespace ProjectSQL.Controllers {
 
     public class DBMSController : Controller {
 
-        // Reserved words dictionarie
+        // Reserved words dictionary
         private static Dictionary<string, List<string>> reservedWords = new Dictionary<string, List<string>>() {
             { "SELECT", new List<string>(){ "SELECT" } },
             { "FROM", new List<string>(){ "FROM" } },
@@ -27,7 +28,7 @@ namespace ProjectSQL.Controllers {
             return View();
         }
 
-        // Try to read the file and save the data in the dictionarie
+        // Try to read the file and save the data in the dictionary
         [HttpPost]
         public ActionResult LoadFile(HttpPostedFileBase reservedWords) {
             if (ValidateFile(reservedWords)) {
@@ -36,6 +37,12 @@ namespace ProjectSQL.Controllers {
                 ViewBag.Message = "Ocurrio un error a la hora de cargar el archivo. Verifique que sea el correcto.";
             }
             return View("LoadReservedWords");
+        }
+
+        // Download the dictionarie as json
+        [HttpPost]
+        public FileResult DownloadDictionary() {
+            return DownloadFile("Dictionary");
         }
 
         /// <summary>Validate and save the data in each file in the directories.</summary>
@@ -118,6 +125,22 @@ namespace ProjectSQL.Controllers {
                 dictionary.Clear();
                 return false;
             }
+        }
+
+
+        /// <summary>Create the file and download them.</summary>
+        /// <param name="name">The name of the file.</param>
+        /// <returns>The file to download.</returns>
+        private FileResult DownloadFile(string name)
+        {
+            string fileName = name + ".json";
+            string path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
+            if (name.Equals("Dictionary")) {
+                System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(reservedWords, Formatting.Indented));
+            }
+            FileContentResult file = File(System.IO.File.ReadAllBytes(path), "application/octet-stream", fileName);
+            System.IO.File.Delete(path);
+            return file;
         }
 
     }
