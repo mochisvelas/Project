@@ -45,6 +45,18 @@ namespace ProjectSQL.Controllers {
             return DownloadFile("Dictionary");
         }
 
+        // Reset the dictionary to the default values
+        [HttpPost]
+        public ActionResult ResetDictionary() {
+            try {
+                DefaultDictionary();
+                ViewBag.Message = "success";
+            } catch (Exception) {
+                ViewBag.Message = "Lo sentimos no se pudo cargar el diccionario a sus valores por defecto.";
+            }
+            return View("LoadReservedWords");
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
@@ -141,6 +153,21 @@ namespace ProjectSQL.Controllers {
             FileContentResult file = File(System.IO.File.ReadAllBytes(path), "application/octet-stream", fileName);
             System.IO.File.Delete(path);
             return file;
+        }
+
+        /// <summary>Load the default values in the dictionarie</summary>
+        private void DefaultDictionary() {
+            reservedWords = new Dictionary<string, List<string>>() {
+                { "SELECT", new List<string>(){ "SELECT" } },
+                { "FROM", new List<string>(){ "FROM" } },
+                { "DELETE", new List<string>(){ "DELETE" } },
+                { "WHERE", new List<string>(){ "WHERE" } },
+                { "CREATE TABLE", new List<string>(){ "CREATE TABLE" } },
+                { "DROP TABLE", new List<string>(){ "DROP TABLE" } },
+                { "INSERT INTO", new List<string>(){ "INSERT INTO" } },
+                { "VALUES", new List<string>(){ "VALUES" } },
+                { "GO", new List<string>(){ "GO" } }
+            };
         }
 
     }
