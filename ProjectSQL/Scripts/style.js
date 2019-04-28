@@ -27,3 +27,20 @@ $(".delete").click(function () {
 $("#cancel").click(function () {
     $("#reservedWordForm").hide()
 })
+
+$(document).ready(function () {
+    message = $("#message").val()
+    if ($("body").hasClass("ReservedWords")) {
+        if (message == "success") {
+            $("#notification").show()
+            $("#notification").attr("class", "notification is-success")
+            $("#text").text("La acción se ejecuto de manera exitosa.")
+        } else {
+            if (message != "null") {
+                $("#notification").show()
+                $("#notification").attr("class", "notification is-danger")
+                $("#text").text(message)
+            }
+        }
+    }
+})

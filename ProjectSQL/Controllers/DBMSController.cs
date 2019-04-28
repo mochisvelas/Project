@@ -25,6 +25,7 @@ namespace ProjectSQL.Controllers {
         // Return the view to load the reserved words
         [HttpGet]
         public ActionResult LoadReservedWords() {
+            ViewBag.Message = "null";
             return View();
         }
 
