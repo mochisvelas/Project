@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BPlusChilds.cs" />
+    <Compile Include="BPlusTree.cs" />
+    <Compile Include="BPlusTreeNode.cs" />
+    <Compile Include="BPlusValues.cs" />
     <Compile Include="BST.cs" />
     <Compile Include="BSTNode.cs" />
     <Compile Include="BTree.cs" />
