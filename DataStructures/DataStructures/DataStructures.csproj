@@ -41,15 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BPlusChilds.cs" />
-    <Compile Include="BPlusTree.cs" />
-    <Compile Include="BPlusTreeNode.cs" />
-    <Compile Include="BPlusValues.cs" />
-    <Compile Include="BST.cs" />
-    <Compile Include="BSTNode.cs" />
-    <Compile Include="BTree.cs" />
-    <Compile Include="BTreeElement.cs" />
-    <Compile Include="BTreeNode.cs" />
+    <Compile Include="B+Tree\BPlusChilds.cs" />
+    <Compile Include="B+Tree\BPlusTree.cs" />
+    <Compile Include="B+Tree\BPlusTreeNode.cs" />
+    <Compile Include="B+Tree\BPlusValues.cs" />
+    <Compile Include="BST\BST.cs" />
+    <Compile Include="BST\BSTNode.cs" />
+    <Compile Include="BTree\BTree.cs" />
+    <Compile Include="BTree\BTreeElement.cs" />
+    <Compile Include="BTree\BTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
