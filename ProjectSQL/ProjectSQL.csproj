@@ -120,6 +120,7 @@
     <Content Include="Views\Layout.cshtml" />
     <Content Include="Views\web.config" />
     <Content Include="Views\DBMS\LoadReservedWords.cshtml" />
+    <Content Include="Views\DBMS\SQLCode.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

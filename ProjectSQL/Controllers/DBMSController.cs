@@ -68,6 +68,12 @@ namespace ProjectSQL.Controllers {
             }
             return View("LoadReservedWords");
         }
+        
+        // Return the view for the sql console
+        [HttpGet]
+        public ActionResult SQLCode() {
+            return View();
+        }
 
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>

@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.BodyClass = "SQLCode";
+    ViewBag.Title = "Codigo SQL";
+    Layout = "~/Views/Layout.cshtml";
+}
+<section class="section" style="padding: 25px">
+    <div class="content has-text-centered">
+        <h1 class="title is-3">Codigo SQL</h1>
+    </div>
+    <div class="container is-fluid" style="margin-top: 20px">
+        <form method="post" action="/DBMS/SQLCode">
+            <div class="section has-background-light">
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea is-success" rows="8" placeholder="Escribe tu codigo SQL"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="field has-text-centered" style="margin: 10px;">
+                <button class="button is-rounded is-success" type="submit" name="submitCode">Realizar Acción</button>
+            </div>
+        </form>
+    </div>
+</section>
+
