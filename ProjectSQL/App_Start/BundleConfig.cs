@@ -11,7 +11,8 @@ namespace ProjectSQL {
             // JS Bundle
             bundles.Add(new StyleBundle("~/bundles/script").Include(
                                         "~/Scripts/jquery-min.js",
-                                        "~/Scripts/style.js"));
+                                        "~/Scripts/style.js",
+                                        "~/Scripts/site.js"));
         }
 
     } 
