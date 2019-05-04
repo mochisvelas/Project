@@ -75,6 +75,22 @@ namespace ProjectSQL.Controllers {
             return View();
         }
 
+        // Return a list of the words to highlight
+        [HttpGet]
+        public JsonResult MatchWords(string text) {
+            if (!string.IsNullOrEmpty(text)) {
+                string[] words = text.ToUpper().Split(' ', '\n');
+                List<string> list = new List<string>();
+                if(FindWords(words, ref list)) {
+                    return Json(new { words = list }, JsonRequestBehavior.AllowGet);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
@@ -212,6 +228,30 @@ namespace ProjectSQL.Controllers {
                 }
             }
             return false;
+        }
+
+        /// <summary>Found the reserved words in the text.</summary>
+        /// <param name="words">The text to check.</param>
+        /// <param name="list">The list to save the words to highlight.</param>
+        /// <returns>True if find words</returns>
+        private bool FindWords(string[] words, ref List<string> list) {
+            bool value = false;
+            foreach(KeyValuePair<string, List<string>> commnad in reservedWords) {
+                foreach(string reservedWord in commnad.Value) {
+                    List<string> reservedWords = new List<string>(reservedWord.Split(' '));
+                    for(int i = 0; i < words.Length; i++) {
+                        foreach(string word in reservedWords) {
+                            if (words[i].Equals(word)) {
+                                if (!list.Contains(words[i])) {
+                                    list.Add(words[i]);
+                                }
+                                value = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return value;
         }
 
     }
