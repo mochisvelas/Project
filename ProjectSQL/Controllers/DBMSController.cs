@@ -72,6 +72,7 @@ namespace ProjectSQL.Controllers {
         // Return the view for the sql console
         [HttpGet]
         public ActionResult SQLCode() {
+            ViewBag.Message = "null";
             return View();
         }
 
@@ -89,6 +90,17 @@ namespace ProjectSQL.Controllers {
             } else {
                 return null;
             }
+        }
+
+        //Get the action to do with the database.
+        [HttpPost]
+        public ActionResult SQLCode(string text) {
+            if(string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) {
+                ViewBag.Message = "No pudimos realizar ninguna acción.";
+            } else {
+                ViewBag.Message = "success";
+            }
+            return View();
         }
 
         /// <summary>Validate and save the data in each file in the directories.</summary>
