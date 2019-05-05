@@ -7,12 +7,13 @@ namespace ProjectSQL {
         public static void RegisterBundles(BundleCollection bundles) {
             // CSS Bundle
             bundles.Add(new StyleBundle("~/bundles/style").Include(
-                                        "~/Styles/bulma.min.css"));
+                                        "~/Styles/bulma.min.css",
+                                        "~/Styles/jquery.highlight-within-textarea.css"));
             // JS Bundle
             bundles.Add(new StyleBundle("~/bundles/script").Include(
                                         "~/Scripts/jquery-min.js",
-                                        "~/Scripts/style.js",
-                                        "~/Scripts/site.js"));
+                                        "~/Scripts/jquery.highlight-within-textarea.js",
+                                        "~/Scripts/style.js"));
         }
 
     } 
