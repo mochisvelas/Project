@@ -28,6 +28,7 @@ $("#cancel").click(function () {
     $("#reservedWordForm").hide()
 })
 
+// Alert message
 $(document).ready(function () {
     message = $("#message").val()
     if ($("body").hasClass("ReservedWords")) {
@@ -44,3 +45,28 @@ $(document).ready(function () {
         }
     }
 })
+
+// Highlight the reserved words
+$("#sqlCode").highlightWithinTextarea({
+    highlight: HighLightWords
+})
+
+// Look what words are matching with the reserved words
+function HighLightWords() {
+    words = undefined
+    txt = $("#sqlCode").val()
+
+    serverResponse = $.ajax({
+        url: "/DBMS/MatchWords",
+        type: "GET",
+        data: { text : txt },
+        async: false,
+        dataType: "json"
+    }).responseJSON
+
+    if (serverResponse) {
+        words = serverResponse["words"]
+    }
+
+    return words
+}
