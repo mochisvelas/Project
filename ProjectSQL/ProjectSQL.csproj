@@ -103,7 +103,6 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\jquery-min.js" />
     <Content Include="Scripts\jquery.highlight-within-textarea.js" />
-    <Content Include="Scripts\site.js" />
     <Content Include="Scripts\style.js" />
     <Content Include="Styles\bulma.min.css" />
     <Content Include="Styles\jquery.highlight-within-textarea.css" />
