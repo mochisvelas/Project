@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -98,6 +99,7 @@ namespace ProjectSQL.Controllers {
             if(string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) {
                 ViewBag.Message = "No pudimos realizar ninguna acción.";
             } else {
+                CheckCommands(text.Trim());
                 ViewBag.Message = "success";
             }
             return View();
@@ -189,8 +191,7 @@ namespace ProjectSQL.Controllers {
         /// <summary>Create the file and download them.</summary>
         /// <param name="name">The name of the file.</param>
         /// <returns>The file to download.</returns>
-        private FileResult DownloadFile(string name)
-        {
+        private FileResult DownloadFile(string name) {
             string fileName = name + ".json";
             string path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
             if (name.Equals("Dictionary")) {
@@ -264,6 +265,17 @@ namespace ProjectSQL.Controllers {
                 }
             }
             return value;
+        }
+        
+        /// <summary>Normalize the text in one line.</summary>
+        /// <param name="text">The text to normalize.</param>
+        /// <returns>The text</returns>
+        private string NormalizeText(string text) {
+            List<string> words = new List<string>(text.Split(' ', '\n'));
+            words.RemoveAll(x => x == "" || x == "\n" || x == "\r");
+            string newText = string.Join(" ", words.ToArray());
+            newText = newText.Replace("\r", "");
+            return newText;
         }
 
     }
