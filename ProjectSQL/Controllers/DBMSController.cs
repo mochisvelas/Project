@@ -265,7 +265,15 @@ namespace ProjectSQL.Controllers {
             }
             return value;
         }
-        
+
+
+        private string CheckCommand(string text) {
+            string message = string.Empty;
+            string command = NormalizeText(text);
+            CheckCreateTable(command.ToUpper(), ref message);
+            return message;
+        }
+
         /// <summary>Check if the syntax for create a table is correct.</summary>
         /// <param name="command">The command to check the syntax.</param>
         /// <param name="message">The message to send back.</param>
@@ -279,6 +287,12 @@ namespace ProjectSQL.Controllers {
                 Match match = Regex.Match(command, pattern);
                 if (!match.Success) {
                     message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
+                } else {
+                    if (command[command.Length - 1].Equals('}')) {
+                    } else {
+                        message = "El comando debe de terminar con }";
+                        break;
+                    }
                 }
             }
             return value;
