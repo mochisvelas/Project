@@ -99,8 +99,7 @@ namespace ProjectSQL.Controllers {
             if(string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) {
                 ViewBag.Message = "No pudimos realizar ninguna acción.";
             } else {
-                CheckCommands(text.Trim());
-                ViewBag.Message = "success";
+                ViewBag.Message = CheckCommand(text.Trim());
             }
             return View();
         }
@@ -267,6 +266,24 @@ namespace ProjectSQL.Controllers {
             return value;
         }
         
+        /// <summary>Check if the syntax for create a table is correct.</summary>
+        /// <param name="command">The command to check the syntax.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the syntax is correct.</returns>
+        private bool CheckCreateTable(string command, ref string message) {
+            bool value = false;
+            List<string> words = reservedWords["CREATE TABLE"];
+            string pattern = string.Empty;
+            foreach(string word in words) {
+                pattern = word + " [a-zA-Z0-9]+ {";
+                Match match = Regex.Match(command, pattern);
+                if (!match.Success) {
+                    message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
+                }
+            }
+            return value;
+        }
+
         /// <summary>Normalize the text in one line.</summary>
         /// <param name="text">The text to normalize.</param>
         /// <returns>The text</returns>
