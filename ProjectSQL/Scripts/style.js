@@ -46,7 +46,16 @@ $(document).ready(function () {
 
 // Highlight the reserved words
 $("#sqlCode").highlightWithinTextarea({
-    highlight: HighLightWords
+    highlight: [
+        {
+            highlight: HighLightWords,
+            className: "green"
+        },
+        {
+            highlight: ["int", "varchar(100)", "datetime", "primary", "key"],
+            className: "blue"
+        }
+    ]
 })
 
 // Look what words are matching with the reserved words

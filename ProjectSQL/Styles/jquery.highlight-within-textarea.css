@@ -51,3 +51,11 @@
 mark {
     background-color: #23d160;
 }
+
+.hwt-content mark.green {
+    background-color: #23d160;
+}
+
+.hwt-content mark.blue {
+    background-color: #a3daff;
+}
