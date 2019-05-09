@@ -297,15 +297,60 @@ namespace ProjectSQL.Controllers {
                             normalizedAttributes = aux.Replace("}", "");
                             List<string> atts = new List<string>(normalizedAttributes.Split(','));
                             if(atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
+                                List<KeyValuePair<string, string>> columns = new List<KeyValuePair<string, string>>();
                                 foreach(string attribute in atts) {
                                     try {
+                                       string att = attribute.Trim();
                                         if(attribute.Contains("INT") || attribute.Contains("VARCHAR(100)") || attribute.Contains("DATETIME")) {
+                                            if(attribute.Contains("PRIMARY KEY")) {
+                                                List<string> helper = new List<string>(att.Split(' '));
+                                                if(helper.Count > 4) {
+                                                    message = "Los nombres de las columnas solo pueden ser de una palabra";
+                                                    value = false;
+                                                    break;
+                                                } else {
+                                                    string name = helper[0];
+                                                    if(name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY")) {
+                                                        message = "Los nombres de las columnas no pueden ser palabras reservadas";
+                                                        value = false;
+                                                        break;
+                                                    } else {
+                                                        helper.RemoveAt(0);
+                                                        KeyValuePair<string, string> col = new KeyValuePair<string, string>(name, string.Join(" ", helper.ToArray()));
+                                                        columns.Add(col);
+                                                        message = "success";
+                                                        value = true;
+                                                    }
+                                                }
+                                            } else {
+                                                List<string> helper = new List<string>(att.Split(' '));
+                                                if (helper.Count > 2) {
+                                                    message = "Los nombres de las columnas solo pueden ser de una palabra";
+                                                    value = false;
+                                                    break;
+                                                } else {
+                                                    string name = helper[0];
+                                                    if (name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY")) {
+                                                        message = "Los nombres de las columnas no pueden ser palabras reservadas";
+                                                        value = false;
+                                                        break;
+                                                    } else {
+                                                        helper.RemoveAt(0);
+                                                        KeyValuePair<string, string> col = new KeyValuePair<string, string>(name, string.Join(" ", helper.ToArray()));
+                                                        columns.Add(col);
+                                                        message = "success";
+                                                        value = true;
+                                                    }
+                                                }
+                                            }
                                         } else {
                                             message = "Los unicos tipos de datos de las columnas pueden ser int, varchar(100) y datetime";
+                                            value = false;
                                             break;
                                         }
                                     } catch (Exception) {
                                         message = "Ocurrio un error al momento de ejecutar el proceso. Intentalo mas tarde.";
+                                        value = false;
                                         break;
                                     }
                                 }
