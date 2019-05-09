@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
@@ -295,6 +296,11 @@ namespace ProjectSQL.Controllers {
                             string aux = normalizedAttributes.Replace("{", "");
                             normalizedAttributes = aux.Replace("}", "");
                             List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                            if(atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
+                            } else {
+                                message = "Debes de agregar una columna de tipo int primary key";
+                                break;
+                            }       
                         }
                     } else {
                         message = "El comando debe de terminar con }";
