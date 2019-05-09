@@ -289,6 +289,13 @@ namespace ProjectSQL.Controllers {
                     message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
                 } else {
                     if (command[command.Length - 1].Equals('}')) {
+                        Match attributes = Regex.Match(command, @"\{(.*?)\}");
+                        if (attributes.Success) {
+                            string normalizedAttributes = attributes.Value;
+                            string aux = normalizedAttributes.Replace("{", "");
+                            normalizedAttributes = aux.Replace("}", "");
+                            List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                        }
                     } else {
                         message = "El comando debe de terminar con }";
                         break;
