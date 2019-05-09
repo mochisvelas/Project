@@ -297,6 +297,18 @@ namespace ProjectSQL.Controllers {
                             normalizedAttributes = aux.Replace("}", "");
                             List<string> atts = new List<string>(normalizedAttributes.Split(','));
                             if(atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
+                                foreach(string attribute in atts) {
+                                    try {
+                                        if(attribute.Contains("INT") || attribute.Contains("VARCHAR(100)") || attribute.Contains("DATETIME")) {
+                                        } else {
+                                            message = "Los unicos tipos de datos de las columnas pueden ser int, varchar(100) y datetime";
+                                            break;
+                                        }
+                                    } catch (Exception) {
+                                        message = "Ocurrio un error al momento de ejecutar el proceso. Intentalo mas tarde.";
+                                        break;
+                                    }
+                                }
                             } else {
                                 message = "Debes de agregar una columna de tipo int primary key";
                                 break;
