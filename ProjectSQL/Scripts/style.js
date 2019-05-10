@@ -77,3 +77,32 @@ function HighLightWords() {
 
     return words
 }
+
+// Detect the name of the table at load view
+$(document).ready(function () {
+    if ($("body").is(".Tables")) {
+        name = $("#tableName").val()
+        if (name) {
+            MakeBodyTable(name)
+        }
+    }
+})
+
+// Detect the name of the table in the change of option
+$("#tableName").on("change", function () {
+    name = $(this).val()
+    MakeBodyTable(name)
+})
+
+// Make the body of the table
+function MakeBodyTable(name) {
+    $.get("/DBMS/TableColumns", { name: name }, function (data) {
+        names = data.names
+        types = data.types
+        $("#bodyTable").empty()
+        for (i = 0; i < names.length; i++) {
+            $row = $('<tr><td class="has-text-centered">' + names[i] + '</td><td class="has-text-centered">' + types[i] + '</td></tr>')
+            $row.appendTo($("#bodyTable"))
+        }
+    })
+}
