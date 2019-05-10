@@ -191,8 +191,7 @@ namespace ProjectSQL.Controllers {
                 return false;
             }
         }
-
-
+        
         /// <summary>Create the file and download them.</summary>
         /// <param name="name">The name of the file.</param>
         /// <returns>The file to download.</returns>
@@ -271,8 +270,7 @@ namespace ProjectSQL.Controllers {
             }
             return value;
         }
-
-
+        
         private string CheckCommand(string text) {
             string message = string.Empty;
             string command = NormalizeText(text);
@@ -290,8 +288,7 @@ namespace ProjectSQL.Controllers {
             newText = newText.Replace("\r", "");
             return newText;
         }
-
-
+        
         /// <summary>Check if the syntax for create a table is correct.</summary>
         /// <param name="command">The command to check the syntax.</param>
         /// <param name="message">The message to send back.</param>
@@ -387,6 +384,8 @@ namespace ProjectSQL.Controllers {
             if (value) {
                 Table table = new Table() { columns = columns, data = new BPlusTree<List<KeyValuePair<string, string>>, int>(4, 4) };
                 tables.Add(name, table);
+                CreateBTreeFile(name);
+                CreateTableFile(name);
             }
             return value;
         }
@@ -464,6 +463,40 @@ namespace ProjectSQL.Controllers {
             if (name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY"))
                 return true;
             return false;
+        }
+
+        /// <summary>Create a file with the elements of the table.</summary>
+        /// <param name="name">The name of the table.</param>
+        private void CreateBTreeFile(string name) {
+            string directory = @"C:\microSQL\arbolesb";
+            string fileName = name.Trim() + ".arbolb";
+            string text = string.Empty;
+            if (!tables[name].data.IsEmpty()) {
+                text = JsonConvert.SerializeObject(tables[name].data.ToList(), Formatting.Indented);
+            }
+            CreateFile(directory, fileName, text);
+        }
+
+        /// <summary>Create a file with the columns of the table.</summary>
+        /// <param name="name">The name of the table</param>
+        private void CreateTableFile(string name) {
+            string directory = @"C:\microSQL\tablas";
+            string fileName = name.Trim() + ".tabla";
+            string text = string.Empty;
+            foreach(KeyValuePair<string, string> column in tables[name].columns) {
+                text += "Nombre: " + column.Key + ", Tipo: " + column.Value + "\n";
+            }
+            CreateFile(directory, fileName, text);
+        }
+
+        /// <summary>Create a file specified.</summary>
+        /// <param name="directory">The directory to the file.</param>
+        /// <param name="file">The name of the file.</param>
+        /// <param name="text">The content of the file.</param>
+        private void CreateFile(string directory, string file, string text) {
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            System.IO.File.WriteAllText(Path.Combine(directory, file), text);
         }
 
     }
