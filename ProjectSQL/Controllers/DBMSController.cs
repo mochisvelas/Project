@@ -110,6 +110,18 @@ namespace ProjectSQL.Controllers {
             return View();
         }
 
+        // Return the view of the tables
+        [HttpGet]
+        public ActionResult Tables() {
+            if(tables.Count == 0) {
+                ViewBag.AreTables = "no";
+            } else {
+                ViewBag.AreTables = "yes";
+                ViewBag.Tables = TablesName();
+            }
+            return View();
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
@@ -497,6 +509,16 @@ namespace ProjectSQL.Controllers {
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             System.IO.File.WriteAllText(Path.Combine(directory, file), text);
+        }
+
+        /// <summary>Save the name of all the tables in a list.</summary>
+        /// <returns>A list with the tables name.</returns>
+        private List<string> TablesName() {
+            List<string> names = new List<string>();
+            foreach(KeyValuePair<string, Table> table in tables) {
+                names.Add(table.Key);
+            }
+            return names;
         }
 
     }
