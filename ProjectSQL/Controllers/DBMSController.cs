@@ -122,6 +122,12 @@ namespace ProjectSQL.Controllers {
             return View();
         }
 
+        // Return the columns of a table
+        public JsonResult TableColumns(string name) {
+            List<List<string>> list = Columns(name);
+            return Json(new { names = list[0], types = list[1] }, JsonRequestBehavior.AllowGet);
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
@@ -519,6 +525,23 @@ namespace ProjectSQL.Controllers {
                 names.Add(table.Key);
             }
             return names;
+        }
+
+        /// <summary>Get the name and the type of each column in a table.</summary>
+        /// <param name="name">The name of the table</param>
+        /// <returns>The list with the names and the types</returns>
+        private List<List<string>> Columns(string name) {
+            List<string> names = new List<string>();
+            List<string> types = new List<string>();
+            List<KeyValuePair<string, string>> columns = tables[name].columns;
+            foreach(KeyValuePair<string, string> column in columns) {
+                names.Add(column.Key);
+                types.Add(column.Value);
+            }
+            List<List<string>> list = new List<List<string>>();
+            list.Add(names);
+            list.Add(types);
+            return list;
         }
 
     }
