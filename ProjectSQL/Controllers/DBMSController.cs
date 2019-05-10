@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using DataStructures;
+using Newtonsoft.Json;
+using ProjectSQL.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,10 @@ namespace ProjectSQL.Controllers {
             { "VALUES", new List<string>(){ "VALUES" } },
             { "GO", new List<string>(){ "GO" } }
         };
-        
+
+        // Dictionarie for the tables
+        private static Dictionary<string, Table> tables = new Dictionary<string, Table>();
+
         // Return the view to load the reserved words
         [HttpGet]
         public ActionResult LoadReservedWords() {
@@ -330,18 +335,23 @@ namespace ProjectSQL.Controllers {
         /// <returns>True if the content is find.</returns>
         private bool GetContent(string command, string name, ref string message) {
             bool value = false;
-            Match attributes = Regex.Match(command, @"\{(.*?)\}");
-            if (attributes.Success) {
-                string normalizedAttributes = NormalizeAttributes(attributes);
-                List<string> atts = new List<string>(normalizedAttributes.Split(','));
-                if (atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
-                    value = GetColumns(atts, name, ref message);
+            if(!tables.ContainsKey(name)) {
+                Match attributes = Regex.Match(command, @"\{(.*?)\}");
+                if (attributes.Success) {
+                    string normalizedAttributes = NormalizeAttributes(attributes);
+                    List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                    if (atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
+                        value = GetColumns(atts, name, ref message);
+                    } else {
+                        message = "Debes de agregar una columna de tipo int primary key";
+                        value = false;
+                    }
                 } else {
-                    message = "Debes de agregar una columna de tipo int primary key";
+                    message = "El comando debe de terminar con }";
                     value = false;
                 }
             } else {
-                message = "El comando debe de terminar con }";
+                message = "Ya existe una tabla con ese nombre.";
                 value = false;
             }
             return value;
@@ -373,6 +383,10 @@ namespace ProjectSQL.Controllers {
                         value = false;
                     }
                 }
+            }
+            if (value) {
+                Table table = new Table() { columns = columns, data = new BPlusTree<List<KeyValuePair<string, string>>, int>(4, 4) };
+                tables.Add(name, table);
             }
             return value;
         }
