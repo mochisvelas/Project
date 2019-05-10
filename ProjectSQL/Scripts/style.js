@@ -82,9 +82,7 @@ function HighLightWords() {
 $(document).ready(function () {
     if ($("body").is(".Tables")) {
         name = $("#tableName").val()
-        if (name) {
-            MakeBodyTable(name)
-        }
+        MakeBodyTable(name)
     }
 })
 
