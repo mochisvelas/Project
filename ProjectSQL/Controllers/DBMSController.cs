@@ -23,7 +23,7 @@ namespace ProjectSQL.Controllers {
             { "VALUES", new List<string>(){ "VALUES" } },
             { "GO", new List<string>(){ "GO" } }
         };
-
+        
         // Return the view to load the reserved words
         [HttpGet]
         public ActionResult LoadReservedWords() {
@@ -312,7 +312,9 @@ namespace ProjectSQL.Controllers {
                     value = false;
                 } else {
                     if (command[command.Length - 1].Equals('}')) {
-                        value = GetContent(command, ref message);
+                        List<string> w = new List<string>(match.Value.Split(' '));
+                        string tableName = w[w.Count - 2];
+                        value = GetContent(command, tableName, ref message);
                     } else {
                         message = "El comando debe de terminar con }";
                         value = false;
@@ -326,14 +328,14 @@ namespace ProjectSQL.Controllers {
         /// <param name="command">The command to get the content.</param>
         /// <param name="message">The message to send back.</param>
         /// <returns>True if the content is find.</returns>
-        private bool GetContent(string command, ref string message) {
+        private bool GetContent(string command, string name, ref string message) {
             bool value = false;
             Match attributes = Regex.Match(command, @"\{(.*?)\}");
             if (attributes.Success) {
                 string normalizedAttributes = NormalizeAttributes(attributes);
                 List<string> atts = new List<string>(normalizedAttributes.Split(','));
                 if (atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
-                    value = GetColumns(atts, ref message);
+                    value = GetColumns(atts, name, ref message);
                 } else {
                     message = "Debes de agregar una columna de tipo int primary key";
                     value = false;
@@ -349,7 +351,7 @@ namespace ProjectSQL.Controllers {
         /// <param name="attributes">The list of attributes for each column.</param>
         /// <param name="message">The message to send back.</param>
         /// <returns>True if the structure of the data is ok.</returns>
-        private bool GetColumns(List<string> attributes, ref string message) {
+        private bool GetColumns(List<string> attributes, string name, ref string message) {
             bool value = false;
             List<KeyValuePair<string, string>> columns = new List<KeyValuePair<string, string>>();
             foreach (string attribute in attributes) {
