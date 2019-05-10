@@ -465,15 +465,26 @@ namespace ProjectSQL.Controllers {
         /// <returns>True if the column is added.</returns>
         private bool AddColumn(string name, List<string> words, ref List<KeyValuePair<string, string>> columns, ref string message) {
             bool value = false;
-            if (NameIsReserved(name)) {
-                message = "Los nombres de las columnas no pueden ser palabras reservadas";
+            bool sameName = false;
+            foreach(KeyValuePair<string, string> item in columns) {
+                if (name.Equals(item.Key)) {
+                    sameName = true;
+                }
+            }
+            if (sameName) {
                 value = false;
+                message = "Los nombres de las columnas no pueden estar repetidos";
             } else {
-                words.RemoveAt(0);
-                KeyValuePair<string, string> column = new KeyValuePair<string, string>(name, string.Join(" ", words.ToArray()));
-                columns.Add(column);
-                message = "success";
-                value = true;
+                if (NameIsReserved(name)) {
+                    message = "Los nombres de las columnas no pueden ser palabras reservadas";
+                    value = false;
+                } else {
+                    words.RemoveAt(0);
+                    KeyValuePair<string, string> column = new KeyValuePair<string, string>(name, string.Join(" ", words.ToArray()));
+                    columns.Add(column);
+                    message = "success";
+                    value = true;
+                }
             }
             return value;
         }
