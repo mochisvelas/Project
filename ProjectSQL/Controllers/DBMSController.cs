@@ -274,100 +274,7 @@ namespace ProjectSQL.Controllers {
             CheckCreateTable(command.ToUpper(), ref message);
             return message;
         }
-
-        /// <summary>Check if the syntax for create a table is correct.</summary>
-        /// <param name="command">The command to check the syntax.</param>
-        /// <param name="message">The message to send back.</param>
-        /// <returns>True if the syntax is correct.</returns>
-        private bool CheckCreateTable(string command, ref string message) {
-            bool value = false;
-            List<string> words = reservedWords["CREATE TABLE"];
-            string pattern = string.Empty;
-            foreach(string word in words) {
-                pattern = word + " [a-zA-Z0-9]+ {";
-                Match match = Regex.Match(command, pattern);
-                if (!match.Success) {
-                    message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
-                } else {
-                    if (command[command.Length - 1].Equals('}')) {
-                        Match attributes = Regex.Match(command, @"\{(.*?)\}");
-                        if (attributes.Success) {
-                            string normalizedAttributes = attributes.Value;
-                            string aux = normalizedAttributes.Replace("{", "");
-                            normalizedAttributes = aux.Replace("}", "");
-                            List<string> atts = new List<string>(normalizedAttributes.Split(','));
-                            if(atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
-                                List<KeyValuePair<string, string>> columns = new List<KeyValuePair<string, string>>();
-                                foreach(string attribute in atts) {
-                                    try {
-                                       string att = attribute.Trim();
-                                        if(attribute.Contains("INT") || attribute.Contains("VARCHAR(100)") || attribute.Contains("DATETIME")) {
-                                            if(attribute.Contains("PRIMARY KEY")) {
-                                                List<string> helper = new List<string>(att.Split(' '));
-                                                if(helper.Count > 4) {
-                                                    message = "Los nombres de las columnas solo pueden ser de una palabra";
-                                                    value = false;
-                                                    break;
-                                                } else {
-                                                    string name = helper[0];
-                                                    if(name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY")) {
-                                                        message = "Los nombres de las columnas no pueden ser palabras reservadas";
-                                                        value = false;
-                                                        break;
-                                                    } else {
-                                                        helper.RemoveAt(0);
-                                                        KeyValuePair<string, string> col = new KeyValuePair<string, string>(name, string.Join(" ", helper.ToArray()));
-                                                        columns.Add(col);
-                                                        message = "success";
-                                                        value = true;
-                                                    }
-                                                }
-                                            } else {
-                                                List<string> helper = new List<string>(att.Split(' '));
-                                                if (helper.Count > 2) {
-                                                    message = "Los nombres de las columnas solo pueden ser de una palabra";
-                                                    value = false;
-                                                    break;
-                                                } else {
-                                                    string name = helper[0];
-                                                    if (name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY")) {
-                                                        message = "Los nombres de las columnas no pueden ser palabras reservadas";
-                                                        value = false;
-                                                        break;
-                                                    } else {
-                                                        helper.RemoveAt(0);
-                                                        KeyValuePair<string, string> col = new KeyValuePair<string, string>(name, string.Join(" ", helper.ToArray()));
-                                                        columns.Add(col);
-                                                        message = "success";
-                                                        value = true;
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            message = "Los unicos tipos de datos de las columnas pueden ser int, varchar(100) y datetime";
-                                            value = false;
-                                            break;
-                                        }
-                                    } catch (Exception) {
-                                        message = "Ocurrio un error al momento de ejecutar el proceso. Intentalo mas tarde.";
-                                        value = false;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                message = "Debes de agregar una columna de tipo int primary key";
-                                break;
-                            }       
-                        }
-                    } else {
-                        message = "El comando debe de terminar con }";
-                        break;
-                    }
-                }
-            }
-            return value;
-        }
-
+        
         /// <summary>Normalize the text in one line.</summary>
         /// <param name="text">The text to normalize.</param>
         /// <returns>The text</returns>
@@ -377,6 +284,170 @@ namespace ProjectSQL.Controllers {
             string newText = string.Join(" ", words.ToArray());
             newText = newText.Replace("\r", "");
             return newText;
+        }
+
+
+        /// <summary>Check if the syntax for create a table is correct.</summary>
+        /// <param name="command">The command to check the syntax.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the syntax is correct.</returns>
+        private bool CheckCreateTable(string command, ref string message) {
+            List<string> words = reservedWords["CREATE TABLE"];
+            return CheckTablePattern(command, ref message, words);
+        }
+        
+        /// <summary>Check if is a pattern match</summary>
+        /// <param name="command">The command to check the pattern</param>
+        /// <param name="message">The message to send back.</param>
+        /// <param name="words">The list of reserved words.</param>
+        /// <returns>True if is a pattern.</returns>
+        private bool CheckTablePattern(string command, ref string message, List<string> words) {
+            bool value = false;
+            string pattern = string.Empty;
+            foreach (string word in words) {
+                pattern = word + " [a-zA-Z0-9]+ {";
+                Match match = Regex.Match(command, pattern);
+                if (!match.Success) {
+                    message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
+                    value = false;
+                } else {
+                    if (command[command.Length - 1].Equals('}')) {
+                        value = GetContent(command, ref message);
+                    } else {
+                        message = "El comando debe de terminar con }";
+                        value = false;
+                    }
+                }
+            }
+            return value;
+        }
+
+        /// <summary>Get the value inside brackets.</summary>
+        /// <param name="command">The command to get the content.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the content is find.</returns>
+        private bool GetContent(string command, ref string message) {
+            bool value = false;
+            Match attributes = Regex.Match(command, @"\{(.*?)\}");
+            if (attributes.Success) {
+                string normalizedAttributes = NormalizeAttributes(attributes);
+                List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                if (atts.Any(x => x.Contains("INT PRIMARY KEY"))) {
+                    value = GetColumns(atts, ref message);
+                } else {
+                    message = "Debes de agregar una columna de tipo int primary key";
+                    value = false;
+                }
+            } else {
+                message = "El comando debe de terminar con }";
+                value = false;
+            }
+            return value;
+        }
+
+        /// <summary>Get the data for each column</summary>
+        /// <param name="attributes">The list of attributes for each column.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the structure of the data is ok.</returns>
+        private bool GetColumns(List<string> attributes, ref string message) {
+            bool value = false;
+            List<KeyValuePair<string, string>> columns = new List<KeyValuePair<string, string>>();
+            foreach (string attribute in attributes) {
+                if (!attribute.Equals(" ")) {
+                    try {
+                        string att = attribute.Trim();
+                        if (attribute.Contains("INT") || attribute.Contains("VARCHAR(100)") || attribute.Contains("DATETIME")) {
+                            if (attribute.Contains("PRIMARY KEY")) {
+                                value = MakeTable("primary", attribute, ref columns, ref message);
+                            } else {
+                                value = MakeTable("field", attribute, ref columns, ref message);
+                            }
+                        } else {
+                            message = "Los unicos tipos de datos de las columnas pueden ser int, varchar(100) y datetime";
+                            value = false;
+                        }
+                    } catch (Exception) {
+                        message = "Ocurrio un error al momento de ejecutar el proceso. Intentalo mas tarde.";
+                        value = false;
+                    }
+                }
+            }
+            return value;
+        }
+
+        /// <summary>Remove the brackets in the attributes.</summary>
+        /// <param name="attributes">The attributes to normalaize.</param>
+        /// <returns>A string with the new attributes.</returns>
+        private string NormalizeAttributes(Match attributes) {
+            string normalizedAttributes = attributes.Value;
+            string aux = normalizedAttributes.Replace("{", "");
+            normalizedAttributes = aux.Replace("}", "");
+            return normalizedAttributes;
+        }
+        
+        /// <summary>Check what type of column is going to add.</summary>
+        /// <param name="type">The type of the column</param>
+        /// <param name="attribute">The data for the column.</param>
+        /// <param name="columns">The list to save the columns.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the column is created.</returns>
+        private bool MakeTable(string type, string attribute, ref List<KeyValuePair<string, string>> columns, ref string message) {
+            bool value = false;
+            List<string> helper = new List<string>(attribute.Trim().Split(' '));
+            if (type.Equals("primary")) {
+                if (helper.Count > 4) {
+                    message = "Los nombres de las columnas solo pueden ser de una palabra";
+                    value = false;
+                } else if(helper.Count == 4) {
+                    string name = helper[0];
+                    value = AddColumn(name, helper, ref columns, ref message);
+                } else {
+                    message = "La columna debe de poseer algun tipo";
+                    value = false;
+                }
+            } else {
+                if (helper.Count > 2) {
+                    message = "Los nombres de las columnas solo pueden ser de una palabra";
+                    value = false;
+                } else if(helper.Count == 2) {
+                    string name = helper[0];
+                    value = AddColumn(name, helper, ref columns, ref message);
+                } else {
+                    message = "La columna debe de poseer algun tipo";
+                    value = false;
+                }
+            }
+            return value;
+        }
+
+        /// <summary>Add a new column to the table.</summary>
+        /// <param name="name">The name of the column.</param>
+        /// <param name="words">The type of the column.</param>
+        /// <param name="columns">The list to save the columns.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the column is added.</returns>
+        private bool AddColumn(string name, List<string> words, ref List<KeyValuePair<string, string>> columns, ref string message) {
+            bool value = false;
+            if (NameIsReserved(name)) {
+                message = "Los nombres de las columnas no pueden ser palabras reservadas";
+                value = false;
+            } else {
+                words.RemoveAt(0);
+                KeyValuePair<string, string> column = new KeyValuePair<string, string>(name, string.Join(" ", words.ToArray()));
+                columns.Add(column);
+                message = "success";
+                value = true;
+            }
+            return value;
+        }
+
+        /// <summary>Check if the name is a reserved word.</summary>
+        /// <param name="name">The name to check</param>
+        /// <returns>True if is a reserved word.</returns>
+        private bool NameIsReserved(string name) {
+            if (name.Equals("INT") || name.Equals("VARCHAR(100)") || name.Equals("DATETIME") || name.Equals("PRIMARY") || name.Equals("KEY"))
+                return true;
+            return false;
         }
 
     }
