@@ -124,8 +124,12 @@ namespace ProjectSQL.Controllers {
 
         // Return the columns of a table
         public JsonResult TableColumns(string name) {
-            List<List<string>> list = Columns(name);
-            return Json(new { names = list[0], types = list[1] }, JsonRequestBehavior.AllowGet);
+            if (name.Equals("undefined")) {
+                return Json(null);
+            } else {
+                List<List<string>> list = Columns(name);
+                return Json(new { names = list[0], types = list[1] }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         /// <summary>Validate and save the data in each file in the directories.</summary>
