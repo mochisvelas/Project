@@ -127,6 +127,7 @@
     <Content Include="Views\web.config" />
     <Content Include="Views\DBMS\LoadReservedWords.cshtml" />
     <Content Include="Views\DBMS\SQLCode.cshtml" />
+    <Content Include="Views\DBMS\Tables.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

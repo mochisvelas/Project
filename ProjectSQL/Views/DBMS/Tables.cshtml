@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.BodyClass = "Tables";
+    ViewBag.Title = "Tablas";
+    Layout = "~/Views/Layout.cshtml";
+}
+<section class="section" style="padding: 25px">
+    <div class="content has-text-centered">
+        <h1 class="title is-3">Tablas</h1>
+    </div>
+    <div class="container is-fluid" style="margin-top: 20px">
+        @if (ViewBag.AreTables.Equals("no")) {
+            <div class="hero is-medium is-bold">
+                <div class="hero-body has-text-centered">
+                    <div class="section ">
+                        <div class="title">
+                            <span class="icon">
+                                <i class="far fa-sad-tear fa-7x"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="subtitle">
+                            <p>Lo siento no se ha creado ninguna tabla.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } else {
+            <nav class="level has-background-light" style="padding: 5px">
+                <div class="level-item has-text-centered">
+                    <p>Selecciona la tabla: </p>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div class="select is-success is-rounded">
+                        <select id="tableName">
+                            @foreach(string name in ViewBag.Tables) {
+                                <option>@name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </nav>
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Nombre</th>
+                        <th class="has-text-centered">Tipo de dato</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTable">
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
