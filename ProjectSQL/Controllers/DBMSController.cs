@@ -296,6 +296,9 @@ namespace ProjectSQL.Controllers {
             return value;
         }
         
+        /// <summary>Check if the command is ok.</summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>The message to send back.</returns>
         private string CheckCommand(string text) {
             string message = string.Empty;
             string command = NormalizeText(text);
@@ -586,11 +589,20 @@ namespace ProjectSQL.Controllers {
             return list;
         }
 
+        /// <summary>Check if the syntax for insert values is correct.</summary>
+        /// <param name="command">The command to check the syntax.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the syntax is correct.</returns>
         private bool CheckInsert(string command, ref string message) {
             List<string> words = reservedWords["INSERT INTO"];
             return CheckInsertPattern(command, ref message, words);
         }
 
+        /// <summary>Check if is a pattern match</summary>
+        /// <param name="command">The command to check the pattern</param>
+        /// <param name="message">The message to send back.</param>
+        /// <param name="words">The list of reserved words.</param>
+        /// <returns>True if is a pattern.</returns>
         private bool CheckInsertPattern(string command, ref string message, List<string> words) {
             bool value = false;
             string pattern = string.Empty;
@@ -621,6 +633,11 @@ namespace ProjectSQL.Controllers {
             return value;
         }
 
+        /// <summary>Get the data for each column</summary>
+        /// <param name="command">The command to get the data.</param>
+        /// <param name="name">The name of the table.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the structure of the data is ok.</returns>
         private bool GetColumns(string command, string name, ref string message) {
             bool value = false;
             if (tables.ContainsKey(name)) {
@@ -663,6 +680,11 @@ namespace ProjectSQL.Controllers {
             return value;
         }
 
+        /// <summary>Get the data for each column</summary>
+        /// <param name="command">The command to get the data.</param>
+        /// <param name="name">The name of the table.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if the structure of the data is ok.</returns>
         private bool GetData(string command, string name, ref string message) {
             bool value = false;
             Match attributes = Regex.Match(command, @"\{(.*?)\}");
@@ -695,6 +717,12 @@ namespace ProjectSQL.Controllers {
             return value;
         }
 
+        /// <summary>Insert a int in the new tree</summary>
+        /// <param name="data">The node for the tree.</param>
+        /// <param name="attribute">The data of the field.</param>
+        /// <param name="type">The type of the data.</param>
+        /// <param name="message">The message to send back.</param>
+        /// <returns>True if it is added.</returns>
         private bool InsertInt(KeyValuePair<string, string> data, string attribute, string type, ref string message) {
             bool value = false;
             if(int.TryParse(attribute, out int n)) {
