@@ -296,8 +296,16 @@ namespace ProjectSQL.Controllers {
         private string CheckCommand(string text) {
             string message = string.Empty;
             string command = NormalizeText(text);
-            CheckCreateTable(command.ToUpper(), ref message);
-            return message;
+            if(CheckCreateTable(command.ToUpper(), ref message)) {
+                return message;
+            } else {
+                message = string.Empty;
+                if(CheckInsert(command.ToUpper(), ref message)) {
+                    return message;
+                } else {
+                    return message;
+                }
+            }
         }
         
         /// <summary>Normalize the text in one line.</summary>
@@ -338,7 +346,20 @@ namespace ProjectSQL.Controllers {
                     if (command[command.Length - 1].Equals('}')) {
                         List<string> w = new List<string>(match.Value.Split(' '));
                         string tableName = w[w.Count - 2];
-                        value = GetContent(command, tableName, ref message);
+                        bool nameReserved = false;
+                        foreach(KeyValuePair<string, List<string>> reservedword in reservedWords) {
+                            foreach(string _w_ in reservedword.Value) {
+                                if (tableName.Equals(_w_) || tableName.Equals("INT") || tableName.Equals("VARCHAR(100)") || tableName.Equals("DATETIME")) {
+                                    nameReserved = true;
+                                }
+                            }
+                        }
+                        if (nameReserved) {
+                            message = "El nombre no puede ser una palabra reservada";
+                            value = false;
+                        } else {
+                            value = GetContent(command, tableName, ref message);
+                        }
                     } else {
                         message = "El comando debe de terminar con }";
                         value = false;
@@ -557,6 +578,131 @@ namespace ProjectSQL.Controllers {
             list.Add(names);
             list.Add(types);
             return list;
+        }
+
+        private bool CheckInsert(string command, ref string message) {
+            List<string> words = reservedWords["INSERT INTO"];
+            return CheckInsertPattern(command, ref message, words);
+        }
+
+        private bool CheckInsertPattern(string command, ref string message, List<string> words) {
+            bool value = false;
+            string pattern = string.Empty;
+            foreach (string word in words) {
+                pattern = word + " [a-zA-Z0-9]+ {";
+                Match match = Regex.Match(command, pattern);
+                if (!match.Success) {
+                    message = "El nombre de la tabla solo puede ser una palabra y debe de ser seguido por {";
+                    value = false;
+                } else {
+                    string newPattern = "} VALUES {";
+                    Match matchValues = Regex.Match(command, newPattern);
+                    if (!matchValues.Success) {
+                        message = "El comando debe de contener la instruccion VALUES y debe de ser seguido por {";
+                        value = false;
+                    } else {
+                        if (command[command.Length - 1].Equals('}')) {
+                            List<string> w = new List<string>(match.Value.Split(' '));
+                            string tableName = w[w.Count - 2];
+                            value = GetColumns(command, tableName, ref message);
+                        } else {
+                            message = "El comando debe de terminar con }";
+                            value = false;
+                        }
+                    }
+                }
+            }
+            return value;
+        }
+
+        private bool GetColumns(string command, string name, ref string message) {
+            bool value = false;
+            if (tables.ContainsKey(name)) {
+                Match attributes = Regex.Match(command, @"\{(.*?)\}");
+                if (attributes.Success) {
+                    string normalizedAttributes = NormalizeAttributes(attributes);
+                    List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                    if(tables[name].columns.Count == atts.Count) {
+                        bool areDifferent = false;
+                        int index = 0;
+                        foreach (KeyValuePair<string, string> column in tables[name].columns) {
+                            if (!column.Key.Equals(atts[index].Trim()))
+                                areDifferent = true;
+                            index++;
+                        }
+                        if (areDifferent) {
+                            message = "Las columnas ingresadas no son las correctas";
+                            value = false;
+                        } else {
+                            Match data = Regex.Match(command, @"VALUES \{(.*?)\}");
+                            if (data.Success) {
+                                GetData(data.Value, name, ref message);
+                            } else {
+                                message = "No se encontro la instruccion VALUES";
+                                value = false;
+                            }
+                        }
+                    } else {
+                        message = "Las columnas ingresadas no son las correctas";
+                        value = false;
+                    }
+                } else {
+                    message = "No se han encotrado los datos de la tabla";
+                    value = false;
+                }
+            } else {
+                message = "No hay ninguna tabla con ese nombre.";
+                value = false;
+            }
+            return value;
+        }
+
+        private bool GetData(string command, string name, ref string message) {
+            bool value = false;
+            Match attributes = Regex.Match(command, @"\{(.*?)\}");
+            if (attributes.Success) {
+                string normalizedAttributes = NormalizeAttributes(attributes);
+                List<string> atts = new List<string>(normalizedAttributes.Split(','));
+                KeyValuePair<string, string> data = new KeyValuePair<string, string>();
+                int index = 0;
+                foreach(string attribute in atts) {
+                    try {
+                        if(!attribute.Equals(" ")) {
+                            string a = attribute.Trim();
+                            string type = tables[name].columns[index].Value;
+                            if (type.Contains("INT")) {
+                                InsertInt(data, a, type, ref message);
+                            } else {
+                                //InsertString();
+                            }
+                            index++;
+                        }
+                    } catch(Exception) {
+                        message = "Los datos a ingresar no son los correctos";
+                        value = false;
+                    }
+                }
+            } else {
+                message = "No se han encotrado los datos ha insertar";
+                value = false;
+            }
+            return value;
+        }
+
+        private bool InsertInt(KeyValuePair<string, string> data, string attribute, string type, ref string message) {
+            bool value = false;
+            if(int.TryParse(attribute, out int n)) {
+                if(type.Contains("PRIMARY KEY")) {
+                    KeyValuePair<string, string> newValue = new KeyValuePair<string, string>(attribute, data.Value);
+                    data = newValue;
+                } else {
+                    KeyValuePair<string, string> newValue = new KeyValuePair<string, string>(attribute, data.Value);
+                }
+            } else {
+                message = "Hay campos numericos en los que estas tratando de ingresar letras";
+                value = false;
+            }
+            return value;
         }
 
     }
