@@ -146,6 +146,12 @@ namespace ProjectSQL.Controllers {
             }
             return View();
         }
+        
+        // Download the querys in a json
+        [HttpGet]
+        public ActionResult DownloadQuerys() {
+            return DownloadFile("querys");
+        }
 
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
@@ -237,6 +243,8 @@ namespace ProjectSQL.Controllers {
             string path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
             if (name.Equals("Dictionary")) {
                 System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(reservedWords, Formatting.Indented));
+            } else {
+                System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(querys, Formatting.Indented));
             }
             FileContentResult file = File(System.IO.File.ReadAllBytes(path), "application/octet-stream", fileName);
             System.IO.File.Delete(path);
@@ -750,7 +758,7 @@ namespace ProjectSQL.Controllers {
             }
             return value;
         }
-
+        
     }
 
 }
