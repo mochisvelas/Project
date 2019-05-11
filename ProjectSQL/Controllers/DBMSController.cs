@@ -29,6 +29,9 @@ namespace ProjectSQL.Controllers {
         // Dictionarie for the tables
         private static Dictionary<string, Table> tables = new Dictionary<string, Table>();
 
+        // List of the querys used.
+        private static List<string> querys = new List<string>();
+
         // Return the view to load the reserved words
         [HttpGet]
         public ActionResult LoadReservedWords() {
@@ -297,12 +300,15 @@ namespace ProjectSQL.Controllers {
             string message = string.Empty;
             string command = NormalizeText(text);
             if(CheckCreateTable(command.ToUpper(), ref message)) {
+                querys.Add(text);
                 return message;
             } else {
                 message = string.Empty;
                 if(CheckInsert(command.ToUpper(), ref message)) {
+                    querys.Add(text);
                     return message;
                 } else {
+                    message = "No se pudo realizar la accion.";
                     return message;
                 }
             }
