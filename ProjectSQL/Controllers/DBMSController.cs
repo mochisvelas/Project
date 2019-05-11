@@ -135,6 +135,18 @@ namespace ProjectSQL.Controllers {
             }
         }
 
+        // Return the view for the querys
+        [HttpGet]
+        public ActionResult Querys() {
+            if (querys.Count == 0) {
+                ViewBag.AreQuerys = "no";
+            } else {
+                ViewBag.AreTables = "yes";
+                ViewBag.Querys = querys;
+            }
+            return View();
+        }
+
         /// <summary>Validate and save the data in each file in the directories.</summary>
         /// <param name="file">The file with the reserved words.</param>
         /// <returns>A boolean with true if is succes.</returns>
