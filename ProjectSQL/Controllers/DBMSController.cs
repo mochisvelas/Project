@@ -141,7 +141,7 @@ namespace ProjectSQL.Controllers {
             if (querys.Count == 0) {
                 ViewBag.AreQuerys = "no";
             } else {
-                ViewBag.AreTables = "yes";
+                ViewBag.AreQuerys = "yes";
                 ViewBag.Querys = querys;
             }
             return View();

@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.BodyClass = "Querys";
+    ViewBag.Title = "Consultas";
+    Layout = "~/Views/Layout.cshtml";
+}
+<section class="section" style="padding: 25px">
+    <div class="content has-text-centered">
+        <h1 class="title is-3">Consultas</h1>
+    </div>
+    <div class="container is-fluid" style="margin-top: 20px">
+        @if (ViewBag.AreQuerys.Equals("no")) {
+            <div class="hero is-medium is-bold">
+                <div class="hero-body has-text-centered">
+                    <div class="section ">
+                        <div class="title">
+                            <span class="icon">
+                                <i class="far fa-sad-tear fa-7x"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="subtitle">
+                            <p>Lo siento no se ha realizado ninguna consulta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } else {
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">No.</th>
+                        <th class="has-text-centered">Codigo de la consulta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i <= ViewBag.Querys.Count; i++) {
+                        <tr>
+                            <th class="has-text-centered">@i</th>
+                            <th class="has-text-centered">@ViewBag.Querys[i - 1]</th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+
